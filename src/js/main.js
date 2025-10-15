@@ -196,13 +196,13 @@ function initializeScrollEffects() {
         
         // Optional: Hide header on scroll down, show on scroll up
         // Uncomment the following code if you want this behavior:
-        /*
+       
         if (currentScroll > lastScroll && currentScroll > 100) {
             header.style.transform = 'translateY(-100%)';
         } else {
             header.style.transform = 'translateY(0)';
         }
-        */
+      
         
         lastScroll = currentScroll;
     });
