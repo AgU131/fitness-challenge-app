@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Browse and join fitness challenges. From running to yoga, find your perfect challenge and start your transformation today.">
+    <title>Fitness Challenges | FitChallenge Social Network</title>
+    <link rel="stylesheet" href="../src/css/style.css">
+    <link rel="stylesheet" href="../src/css/challenges.css">
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header-placeholder"></div>
+
+    <!-- Page Hero -->
+    <section class="page-hero">
+        <div class="container">
+            <h1 class="page-title">Fitness Challenges</h1>
+            <p class="page-subtitle">Push your limits. Track your progress. Achieve greatness.</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="challenges-page">
+        <div class="container">
+            <!-- Filters Section -->
+            <section class="filters-section">
+                <div class="filters-header">
+                    <h2>Find Your Challenge</h2>
+                    <button class="filter-toggle" aria-label="Toggle filters">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="4" y1="21" x2="4" y2="14"/>
+                            <line x1="4" y1="10" x2="4" y2="3"/>
+                            <line x1="12" y1="21" x2="12" y2="12"/>
+                            <line x1="12" y1="8" x2="12" y2="3"/>
+                            <line x1="20" y1="21" x2="20" y2="16"/>
+                            <line x1="20" y1="12" x2="20" y2="3"/>
+                            <line x1="1" y1="14" x2="7" y2="14"/>
+                            <line x1="9" y1="8" x2="15" y2="8"/>
+                            <line x1="17" y1="16" x2="23" y2="16"/>
+                        </svg>
+                        Filters
+                    </button>
+                </div>
+
+                <div class="filters-container">
+                    <div class="filter-group">
+                        <label for="category-filter">Category</label>
+                        <select id="category-filter" class="filter-select">
+                            <option value="all">All Categories</option>
+                            <option value="running">Running</option>
+                            <option value="yoga">Yoga</option>
+                            <option value="strength">Strength Training</option>
+                            <option value="hiit">HIIT</option>
+                            <option value="cycling">Cycling</option>
+                            <option value="swimming">Swimming</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="difficulty-filter">Difficulty</label>
+                        <select id="difficulty-filter" class="filter-select">
+                            <option value="all">All Levels</option>
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="duration-filter">Duration</label>
+                        <select id="duration-filter" class="filter-select">
+                            <option value="all">Any Duration</option>
+                            <option value="7">7 Days</option>
+                            <option value="14">14 Days</option>
+                            <option value="30">30 Days</option>
+                            <option value="60">60 Days</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="sort-filter">Sort By</label>
+                        <select id="sort-filter" class="filter-select">
+                            <option value="popular">Most Popular</option>
+                            <option value="newest">Newest</option>
+                            <option value="participants">Most Participants</option>
+                            <option value="difficulty">Difficulty Level</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Challenges Grid -->
+            <section class="challenges-section">
+                <div class="section-header">
+                    <h2>Available Challenges</h2>
+                    <span class="challenge-count" id="challenge-count">Loading...</span>
+                </div>
+
+                <div class="challenges-grid" id="challenges-grid">
+                    <!-- Challenge Card 1: 30-Day Running Challenge -->
+                    <article class="challenge-card" data-category="running" data-difficulty="beginner" data-duration="30">
+                        <div class="challenge-image">
+                            <img src="../src/images/placeholder-workout.jpg" alt="30-Day Running Challenge">
+                            <div class="challenge-badge">Popular</div>
+                        </div>
+                        <div class="challenge-content">
+                            <div class="challenge-header">
+                                <span class="challenge-category">Running</span>
+                                <span class="challenge-difficulty beginner">Beginner</span>
+                            </div>
+                            <h3 class="challenge-title">30-Day Running Challenge</h3>
+                            <p class="challenge-description">Build your running endurance from scratch. Start with 10 minutes and work your way up to 30-minute continuous runs.</p>
+                            
+                            <div class="challenge-stats">
+                                <div class="stat-item">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                                    </svg>
+                                    <span>30 Days</span>
+                                </div>
+                                <div class="stat-item">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                                        <circle cx="9" cy="7" r="4"/>
+                                        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+                                    </svg>
+                                    <span>2,453 joined</span>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary btn-block join-challenge-btn" data-challenge-id="1">
+                                Join Challenge
+                            </button>
+                        </div>
+                    </article>
+
+                    <!-- Challenge Card 2: Yoga Flow 14-Day -->
+                    <article class="challenge-card" data-category="yoga" data-difficulty="beginner" data-duration="14">
+                        <div class="challenge-image">
+                            <img src="../src/images/placeholder-workout.jpg" alt="Yoga Flow 14-Day Challenge">
+                            <div class="challenge-badge new">New</div>
+                        </div>
+                        <div class="challenge-content">
+                            <div class="challenge-header">
+                                <span class="challenge-category">Yoga</span>
+                                <span class="challenge-difficulty beginner">Beginner</span>
+                            </div>
+                            <h3 class="challenge-title">Yoga Flow 14-Day</h3>
+                            <p class="challenge-description">Improve flexibility and mindfulness with daily yoga sessions. Perfect for beginners looking to establish a consistent practice.</p>
+                            
+                            <div class="challenge-stats">
+                                <div class="stat-item">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                                    </svg>
+                                    <span>14 Days</span>
+                                </div>
+                                <div class="stat-item">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                                        <circle cx="9" cy="7" r="4"/>
+                                        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+                                    </svg>
+                                    <span>1,892 joined</span>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary btn-block join-challenge-btn" data-challenge-id="2">
+                                Join Challenge
+                            </button>
+                        </div>
+                    </article>
+
+                    <!-- Challenge Card 3: Strength Builder 60-Day -->
+                    <article class="challenge-card" data-category="strength" data-difficulty="intermediate" data-duration="60">
+                        <div class="challenge-image">
+                            <img src="../src/images/placeholder-workout.jpg" alt="Strength Builder Challenge">
+                        </div>
+                        <div class="challenge-content">
+                            <div class="challenge-header">
+                                <span class="challenge-category">Strength</span>
+                                <span class="challenge-difficulty intermediate">Intermediate</span>
+                            </div>
+                            <h3 class="challenge-title">Strength Builder 60-Day</h3>
+                            <p class="challenge-description">Build lean muscle and increase your overall strength with progressive resistance training. Includes nutrition guidance.</p>
+                            
+                            <div class="challenge-stats">
+                                <div class="stat-item">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                                    </svg>
+                                    <span>60 Days</span>
+                                </div>
+                                <div class="stat-item">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                                        <circle cx="9" cy="7" r="4"/>
+                                        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+                                    </svg>
+                                    <span>3,721 joined</span>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary btn-block join-challenge-btn" data-challenge-id="3">
+                                Join Challenge
+                            </button>
+                        </div>
+                    </article>
+
+                    <!-- Challenge Card 4: HIIT Burn 30-Day -->
+                    <article class="challenge-card" data-category="hiit" data-difficulty="advanced" data-duration="30">
+                        <div class="challenge-image">
+                            <img src="../src/images/placeholder-workout.jpg" alt="HIIT Burn Challenge">
+                            <div class="challenge-badge">Trending</div>
+                        </div>
+                        <div class="challenge-content">
+                            <div class="challenge-header">
+                                <span class="challenge-category">HIIT</span>
+                                <span class="challenge-difficulty advanced">Advanced</span>
+                            </div>
+                            <h3 class="challenge-title">HIIT Burn 30-Day</h3>
+                            <p class="challenge-description">High-intensity interval training to maximize calorie burn and improve cardiovascular fitness. Not for the faint of heart!</p>
+                            
+                            <div class="challenge-stats">
+                                <div class="stat-item">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                                    </svg>
+                                    <span>30 Days</span>
+                                </div>
+                                <div class="stat-item">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                                        <circle cx="9" cy="7" r="4"/>
+                                        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+                                    </svg>
+                                    <span>1,234 joined</span>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary btn-block join-challenge-btn" data-challenge-id="4">
+                                Join Challenge
+                            </button>
+                        </div>
+                    </article>
+
+                    <!-- Challenge Card 5: Cycling Endurance -->
+                    <article class="challenge-card" data-category="cycling" data-difficulty="intermediate" data-duration="30">
+                        <div class="challenge-image">
+                            <img src="../src/images/placeholder-workout.jpg" alt="Cycling Endurance Challenge">
+                        </div>
+                        <div class="challenge-content">
+                            <div class="challenge-header">
+                                <span class="challenge-category">Cycling</span>
+                                <span class="challenge-difficulty intermediate">Intermediate</span>
+                            </div>
+                            <h3 class="challenge-title">Cycling Endurance 30-Day</h3>
+                            <p class="challenge-description">Build your cycling stamina with progressive distance goals. Suitable for outdoor or indoor cycling enthusiasts.</p>
+                            
+                            <div class="challenge-stats">
+                                <div class="stat-item">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                                    </svg>
+                                    <span>30 Days</span>
+                                </div>
+                                <div class="stat-item">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                                        <circle cx="9" cy="7" r="4"/>
+                                        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+                                    </svg>
+                                    <span>987 joined</span>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary btn-block join-challenge-btn" data-challenge-id="5">
+                                Join Challenge
+                            </button>
+                        </div>
+                    </article>
+
+                    <!-- Challenge Card 6: Swimming Sprint -->
+                    <article class="challenge-card" data-category="swimming" data-difficulty="intermediate" data-duration="14">
+                        <div class="challenge-image">
+                            <img src="../src/images/placeholder-workout.jpg" alt="Swimming Sprint Challenge">
+                        </div>
+                        <div class="challenge-content">
+                            <div class="challenge-header">
+                                <span class="challenge-category">Swimming</span>
+                                <span class="challenge-difficulty intermediate">Intermediate</span>
+                            </div>
+                            <h3 class="challenge-title">Swimming Sprint 14-Day</h3>
+                            <p class="challenge-description">Improve your swimming technique and speed with focused interval training. Perfect for pool or open water swimmers.</p>
+                            
+                            <div class="challenge-stats">
+                                <div class="stat-item">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                                    </svg>
+                                    <span>14 Days</span>
+                                </div>
+                                <div class="stat-item">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                                        <circle cx="9" cy="7" r="4"/>
+                                        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+                                    </svg>
+                                    <span>654 joined</span>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary btn-block join-challenge-btn" data-challenge-id="6">
+                                Join Challenge
+                            </button>
+                        </div>
+                    </article>
+
+                    <!-- Challenge Card 7: Core Power -->
+                    <article class="challenge-card" data-category="strength" data-difficulty="beginner" data-duration="7">
+                        <div class="challenge-image">
+                            <img src="../src/images/placeholder-workout.jpg" alt="Core Power Challenge">
+                            <div class="challenge-badge">Quick Start</div>
+                        </div>
+                        <div class="challenge-content">
+                            <div class="challenge-header">
+                                <span class="challenge-category">Strength</span>
+                                <span class="challenge-difficulty beginner">Beginner</span>
+                            </div>
+                            <h3 class="challenge-title">Core Power 7-Day</h3>
+                            <p class="challenge-description">Strengthen your core with targeted ab exercises. Short and effective workouts perfect for busy schedules.</p>
+                            
+                            <div class="challenge-stats">
+                                <div class="stat-item">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                                    </svg>
+                                    <span>7 Days</span>
+                                </div>
+                                <div class="stat-item">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                                        <circle cx="9" cy="7" r="4"/>
+                                        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+                                    </svg>
+                                    <span>5,432 joined</span>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary btn-block join-challenge-btn" data-challenge-id="7">
+                                Join Challenge
+                            </button>
+                        </div>
+                    </article>
+
+                    <!-- Challenge Card 8: Full Body HIIT -->
+                    <article class="challenge-card" data-category="hiit" data-difficulty="intermediate" data-duration="14">
+                        <div class="challenge-image">
+                            <img src="../src/images/placeholder-workout.jpg" alt="Full Body HIIT Challenge">
+                        </div>
+                        <div class="challenge-content">
+                            <div class="challenge-header">
+                                <span class="challenge-category">HIIT</span>
+                                <span class="challenge-difficulty intermediate">Intermediate</span>
+                            </div>
+                            <h3 class="challenge-title">Full Body HIIT 14-Day</h3>
+                            <p class="challenge-description">Total body transformation with high-intensity workouts. Burn fat and build muscle in just 20 minutes per day.</p>
+                            
+                            <div class="challenge-stats">
+                                <div class="stat-item">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                                    </svg>
+                                    <span>14 Days</span>
+                                </div>
+                                <div class="stat-item">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                                        <circle cx="9" cy="7" r="4"/>
+                                        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+                                    </svg>
+                                    <span>2,108 joined</span>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary btn-block join-challenge-btn" data-challenge-id="8">
+                                Join Challenge
+                            </button>
+                        </div>
+                    </article>
+                </div>
+
+                <!-- Empty State (hidden by default) -->
+                <div class="empty-state" id="empty-state" style="display: none;">
+                    <svg width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                    <h3>No challenges found</h3>
+                    <p>Try adjusting your filters to find more challenges.</p>
+                    <button class="btn btn-primary" id="reset-filters">Reset Filters</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer-placeholder"></div>
+
+    <script src="../src/js/main.js" type="module"></script>
+    <script src="../src/js/challenges-filter.js" type="module"></script>
+</body>
+</html>
