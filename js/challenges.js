@@ -43,7 +43,7 @@ const DIFFICULTY_LEVELS = {
  */
 function initializeDefaultChallenges() {
     const challenges = getChallenges();
-    
+
     if (challenges.length === 0) {
         const defaultChallenges = [
             {
@@ -156,7 +156,7 @@ function initializeDefaultChallenges() {
                 featured: false
             }
         ];
-        
+
         localStorage.setItem(CHALLENGE_CONFIG.STORAGE_KEY, JSON.stringify(defaultChallenges));
         console.log('✅ Default challenges initialized');
     }
@@ -238,10 +238,10 @@ export function getUserChallenges(userId = null) {
     try {
         const user = userId || getCurrentUser()?.id;
         if (!user) return [];
-        
+
         const userChallengesJson = localStorage.getItem(CHALLENGE_CONFIG.USER_CHALLENGES_KEY);
         const allUserChallenges = userChallengesJson ? JSON.parse(userChallengesJson) : {};
-        
+
         return allUserChallenges[user] || [];
     } catch (error) {
         console.error('Error reading user challenges:', error);
@@ -280,17 +280,17 @@ export async function joinChallenge(challengeId) {
                 message: 'You must be logged in to join challenges'
             };
         }
-        
+
         const user = getCurrentUser();
         const challenge = getChallengeById(challengeId);
-        
+
         if (!challenge) {
             return {
                 success: false,
                 message: 'Challenge not found'
             };
         }
-        
+
         // Check if already joined
         if (hasJoinedChallenge(challengeId)) {
             return {
@@ -298,18 +298,18 @@ export async function joinChallenge(challengeId) {
                 message: 'You have already joined this challenge'
             };
         }
-        
+
         // Check max active challenges
         const userChallenges = getUserChallenges();
         const activeChallenges = userChallenges.filter(uc => uc.status === 'active');
-        
+
         if (activeChallenges.length >= CHALLENGE_CONFIG.MAX_ACTIVE_CHALLENGES) {
             return {
                 success: false,
                 message: `You can only have ${CHALLENGE_CONFIG.MAX_ACTIVE_CHALLENGES} active challenges at a time`
             };
         }
-        
+
         // Create user challenge entry
         const userChallenge = {
             id: `${user.id}_${challengeId}_${Date.now()}`,
@@ -327,29 +327,29 @@ export async function joinChallenge(challengeId) {
             },
             joinedAt: new Date().toISOString()
         };
-        
+
         // Save user challenge
         const userChallengesJson = localStorage.getItem(CHALLENGE_CONFIG.USER_CHALLENGES_KEY);
         const allUserChallenges = userChallengesJson ? JSON.parse(userChallengesJson) : {};
-        
+
         if (!allUserChallenges[user.id]) {
             allUserChallenges[user.id] = [];
         }
-        
+
         allUserChallenges[user.id].push(userChallenge);
         localStorage.setItem(CHALLENGE_CONFIG.USER_CHALLENGES_KEY, JSON.stringify(allUserChallenges));
-        
+
         // Update challenge participants count
         updateChallengeParticipants(challengeId, 1);
-        
+
         console.log('✅ Joined challenge:', challenge.title);
-        
+
         return {
             success: true,
             message: `Successfully joined ${challenge.title}!`,
             userChallenge: userChallenge
         };
-        
+
     } catch (error) {
         console.error('Error joining challenge:', error);
         return {
@@ -369,33 +369,33 @@ export function leaveChallenge(challengeId) {
         if (!isLoggedIn()) {
             return { success: false, message: 'You must be logged in' };
         }
-        
+
         const user = getCurrentUser();
         const userChallengesJson = localStorage.getItem(CHALLENGE_CONFIG.USER_CHALLENGES_KEY);
         const allUserChallenges = userChallengesJson ? JSON.parse(userChallengesJson) : {};
-        
+
         if (!allUserChallenges[user.id]) {
             return { success: false, message: 'Challenge not found' };
         }
-        
+
         // Find and update challenge status
         const userChallenges = allUserChallenges[user.id];
         const challengeIndex = userChallenges.findIndex(uc => uc.challengeId === challengeId);
-        
+
         if (challengeIndex === -1) {
             return { success: false, message: 'You have not joined this challenge' };
         }
-        
+
         userChallenges[challengeIndex].status = 'abandoned';
         userChallenges[challengeIndex].endDate = new Date().toISOString();
-        
+
         localStorage.setItem(CHALLENGE_CONFIG.USER_CHALLENGES_KEY, JSON.stringify(allUserChallenges));
-        
+
         // Update challenge participants count
         updateChallengeParticipants(challengeId, -1);
-        
+
         return { success: true, message: 'Challenge abandoned' };
-        
+
     } catch (error) {
         console.error('Error leaving challenge:', error);
         return { success: false, message: 'An error occurred' };
@@ -413,27 +413,27 @@ export function leaveChallenge(challengeId) {
  */
 function initializeChallengeProgress(challenge) {
     const progress = {};
-    
+
     if (challenge.goals.totalDistance) {
         progress.currentDistance = 0;
         progress.totalDistance = challenge.goals.totalDistance;
     }
-    
+
     if (challenge.goals.caloriesBurned) {
         progress.currentCalories = 0;
         progress.totalCalories = challenge.goals.caloriesBurned;
     }
-    
+
     if (challenge.goals.totalMinutes) {
         progress.currentMinutes = 0;
         progress.totalMinutes = challenge.goals.totalMinutes;
     }
-    
+
     if (challenge.goals.totalSessions) {
         progress.currentSessions = 0;
         progress.totalSessions = challenge.goals.totalSessions;
     }
-    
+
     return progress;
 }
 
@@ -456,63 +456,63 @@ export function updateChallengeProgress(challengeId, progressData) {
         if (!isLoggedIn()) {
             return { success: false, message: 'You must be logged in' };
         }
-        
+
         const user = getCurrentUser();
         const userChallengesJson = localStorage.getItem(CHALLENGE_CONFIG.USER_CHALLENGES_KEY);
         const allUserChallenges = userChallengesJson ? JSON.parse(userChallengesJson) : {};
-        
+
         if (!allUserChallenges[user.id]) {
             return { success: false, message: 'Challenge not found' };
         }
-        
+
         const userChallenges = allUserChallenges[user.id];
         const challengeIndex = userChallenges.findIndex(uc => uc.challengeId === challengeId);
-        
+
         if (challengeIndex === -1) {
             return { success: false, message: 'You have not joined this challenge' };
         }
-        
+
         const userChallenge = userChallenges[challengeIndex];
-        
+
         // Update progress
         if (progressData.distance) {
-            userChallenge.progress.currentDistance = 
+            userChallenge.progress.currentDistance =
                 (userChallenge.progress.currentDistance || 0) + progressData.distance;
         }
-        
+
         if (progressData.calories) {
-            userChallenge.progress.currentCalories = 
+            userChallenge.progress.currentCalories =
                 (userChallenge.progress.currentCalories || 0) + progressData.calories;
         }
-        
+
         if (progressData.minutes) {
-            userChallenge.progress.currentMinutes = 
+            userChallenge.progress.currentMinutes =
                 (userChallenge.progress.currentMinutes || 0) + progressData.minutes;
         }
-        
+
         if (progressData.workoutCompleted) {
             userChallenge.progress.completedWorkouts++;
-            userChallenge.progress.currentDay = 
+            userChallenge.progress.currentDay =
                 Math.min(userChallenge.progress.currentDay + 1, userChallenge.progress.totalDays);
         }
-        
+
         // Check if challenge is completed
         const completionPercentage = calculateChallengeProgress(userChallenge);
         if (completionPercentage >= 100) {
             userChallenge.status = 'completed';
             userChallenge.completedAt = new Date().toISOString();
         }
-        
+
         // Save updated data
         localStorage.setItem(CHALLENGE_CONFIG.USER_CHALLENGES_KEY, JSON.stringify(allUserChallenges));
-        
+
         return {
             success: true,
             message: 'Progress updated',
             progress: userChallenge.progress,
             completionPercentage: completionPercentage
         };
-        
+
     } catch (error) {
         console.error('Error updating progress:', error);
         return { success: false, message: 'An error occurred' };
@@ -532,33 +532,33 @@ export function calculateChallengeProgress(userChallenge) {
     const progress = userChallenge.progress;
     let totalPercentage = 0;
     let criteriaCount = 0;
-    
+
     // Calculate percentage for each goal
     if (progress.totalWorkouts) {
         totalPercentage += (progress.completedWorkouts / progress.totalWorkouts) * 100;
         criteriaCount++;
     }
-    
+
     if (progress.totalDistance) {
         totalPercentage += (progress.currentDistance / progress.totalDistance) * 100;
         criteriaCount++;
     }
-    
+
     if (progress.totalCalories) {
         totalPercentage += (progress.currentCalories / progress.totalCalories) * 100;
         criteriaCount++;
     }
-    
+
     if (progress.totalMinutes) {
         totalPercentage += (progress.currentMinutes / progress.totalMinutes) * 100;
         criteriaCount++;
     }
-    
+
     if (progress.totalSessions) {
         totalPercentage += (progress.currentSessions / progress.totalSessions) * 100;
         criteriaCount++;
     }
-    
+
     // Return average percentage
     return criteriaCount > 0 ? Math.min(Math.round(totalPercentage / criteriaCount), 100) : 0;
 }
@@ -574,19 +574,19 @@ export async function syncChallengeProgress(challengeId) {
         if (!challenge) {
             return { success: false, message: 'Challenge not found' };
         }
-        
+
         let syncedData = {};
-        
+
         // Sync with Strava for running/cycling challenges
-        if (challenge.category === CHALLENGE_CATEGORIES.RUNNING || 
+        if (challenge.category === CHALLENGE_CATEGORIES.RUNNING ||
             challenge.category === CHALLENGE_CATEGORIES.CYCLING) {
             try {
                 const activities = await getStravaActivities({ per_page: 10 });
-                
+
                 // Calculate totals from recent activities
                 const totalDistance = activities.reduce((sum, act) => sum + (act.distance / 1000), 0);
                 const totalCalories = activities.reduce((sum, act) => sum + (act.calories || 0), 0);
-                
+
                 syncedData.strava = {
                     distance: totalDistance,
                     calories: totalCalories,
@@ -596,11 +596,11 @@ export async function syncChallengeProgress(challengeId) {
                 console.log('Strava sync skipped:', error.message);
             }
         }
-        
+
         // Sync with Fitbit for general fitness data
         try {
             const fitbitData = await getFitbitDailyActivity();
-            
+
             syncedData.fitbit = {
                 steps: fitbitData.summary?.steps || 0,
                 calories: fitbitData.summary?.caloriesOut || 0,
@@ -609,28 +609,28 @@ export async function syncChallengeProgress(challengeId) {
         } catch (error) {
             console.log('Fitbit sync skipped:', error.message);
         }
-        
+
         // Update challenge progress with synced data
         if (Object.keys(syncedData).length > 0) {
             const progressUpdate = {
                 distance: syncedData.strava?.distance || syncedData.fitbit?.distance || 0,
                 calories: syncedData.strava?.calories || syncedData.fitbit?.calories || 0
             };
-            
+
             updateChallengeProgress(challengeId, progressUpdate);
-            
+
             return {
                 success: true,
                 message: 'Progress synced successfully',
                 syncedData: syncedData
             };
         }
-        
+
         return {
             success: false,
             message: 'No data available to sync. Please connect your fitness apps.'
         };
-        
+
     } catch (error) {
         console.error('Error syncing progress:', error);
         return {
@@ -656,7 +656,7 @@ export async function syncChallengeProgress(challengeId) {
  */
 export function generateProgressBar(percentage, label = '') {
     const safePercentage = Math.min(Math.max(percentage, 0), 100);
-    
+
     return `
         <div class="progress-container">
             ${label ? `<div class="progress-label">${label}</div>` : ''}
@@ -679,7 +679,7 @@ export function renderChallengeCard(challenge, showJoinButton = true) {
     const hasJoined = hasJoinedChallenge(challenge.id);
     const buttonText = hasJoined ? 'View Progress' : 'Join Challenge';
     const buttonClass = hasJoined ? 'btn-secondary' : 'btn-primary';
-    
+
     return `
         <article class="challenge-card" data-challenge-id="${challenge.id}">
             <div class="challenge-image">
@@ -729,25 +729,25 @@ export function renderChallengeCard(challenge, showJoinButton = true) {
  */
 export async function loadFeaturedChallenges(container, limit = 3) {
     if (!container) return;
-    
+
     try {
         const challenges = getFeaturedChallenges(limit);
-        
+
         if (challenges.length === 0) {
             container.innerHTML = '<p class="no-challenges">No challenges available at the moment.</p>';
             return;
         }
-        
-        container.innerHTML = challenges.map(challenge => 
+
+        container.innerHTML = challenges.map(challenge =>
             renderChallengeCard(challenge, true)
         ).join('');
-        
+
         // Attach event listeners to join buttons
         const joinButtons = container.querySelectorAll('.join-challenge-btn');
         joinButtons.forEach(button => {
             button.addEventListener('click', handleJoinButtonClick);
         });
-        
+
     } catch (error) {
         console.error('Error loading featured challenges:', error);
         container.innerHTML = '<p class="error-message">Error loading challenges</p>';
@@ -761,32 +761,32 @@ export async function loadFeaturedChallenges(container, limit = 3) {
 async function handleJoinButtonClick(event) {
     const button = event.target;
     const challengeId = button.dataset.challengeId;
-    
+
     // Check if already joined
     if (hasJoinedChallenge(challengeId)) {
         window.location.href = `../profile/index.html?tab=challenges`;
         return;
     }
-    
+
     // Check if user is logged in
     if (!isLoggedIn()) {
         alert('Please login to join challenges');
         window.location.href = '../login/index.html';
         return;
     }
-    
+
     // Disable button during processing
     button.disabled = true;
     button.textContent = 'Joining...';
-    
+
     // Join challenge
     const result = await joinChallenge(challengeId);
-    
+
     if (result.success) {
         button.textContent = 'Joined!';
         button.classList.remove('btn-primary');
         button.classList.add('btn-secondary');
-        
+
         // Show success message
         setTimeout(() => {
             button.textContent = 'View Progress';
@@ -823,7 +823,7 @@ function updateChallengeParticipants(challengeId, increment) {
     try {
         const challenges = getChallenges();
         const challengeIndex = challenges.findIndex(c => c.id === challengeId);
-        
+
         if (challengeIndex !== -1) {
             challenges[challengeIndex].participants += increment;
             localStorage.setItem(CHALLENGE_CONFIG.STORAGE_KEY, JSON.stringify(challenges));

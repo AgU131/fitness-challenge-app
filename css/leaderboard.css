@@ -1,0 +1,94 @@
+/* ========================================
+   Leaderboard Styles
+   ======================================== */
+
+.leaderboard {
+    padding: var(--spacing-2xl) 0;
+    background-color: var(--light-gray);
+}
+
+.leaderboard .container {
+    text-align: center;
+    background-color: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: var(--spacing-2xl) var(--spacing-lg);
+    max-width: 900px;
+}
+
+.leaderboard h1 {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-sm);
+}
+
+.leaderboard p {
+    color: var(--neutral-light);
+    font-size: 1.1rem;
+    margin-bottom: var(--spacing-xl);
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+}
+
+.leaderboard-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leaderboard-table th {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--white);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: var(--spacing-sm);
+    text-align: center;
+}
+
+.leaderboard-table td {
+    padding: var(--spacing-sm);
+    text-align: center;
+    border-bottom: 1px solid var(--medium-gray);
+    color: var(--neutral-dark);
+    font-weight: 500;
+}
+
+.leaderboard-table tr:nth-child(even) {
+    background-color: var(--light-gray);
+}
+
+.leaderboard-table tr:hover {
+    background-color: var(--primary-light);
+    color: var(--white);
+    transition: background var(--transition-base), color var(--transition-base);
+}
+
+.error {
+    color: #e74c3c;
+    font-weight: 600;
+    background-color: rgba(231, 76, 60, 0.1);
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+}
+
+/* ========================================
+   Responsive
+   ======================================== */
+
+@media (max-width: 768px) {
+    .leaderboard h1 {
+        font-size: 2rem;
+    }
+
+    .leaderboard-table th,
+    .leaderboard-table td {
+        font-size: 0.9rem;
+        padding: var(--spacing-xs);
+    }
+}
