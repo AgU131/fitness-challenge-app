@@ -3,14 +3,14 @@
 // Handles filtering, sorting, and display of challenges
 // ========================================
 
-import { 
-    getChallenges, 
-    getChallengesByCategory, 
+import {
+    getChallenges,
+    getChallengesByCategory,
     getChallengesByDifficulty,
     renderChallengeCard,
     hasJoinedChallenge,
     joinChallenge
-} from './challenge.js';
+} from './challenges.js';
 import { isLoggedIn } from './auth.js';
 
 // ========================================
@@ -34,26 +34,28 @@ let currentFilters = {
  */
 function applyFilters() {
     let challenges = getChallenges();
-    
+
     // Filter by category
     if (currentFilters.category !== 'all') {
         challenges = challenges.filter(c => c.category === currentFilters.category);
     }
-    
+
     // Filter by difficulty
     if (currentFilters.difficulty !== 'all') {
         challenges = challenges.filter(c => c.difficulty === currentFilters.difficulty);
     }
-    
-    // Filter by duration
+
+    // Filter by duration (treat selected value as minimum duration)
     if (currentFilters.duration !== 'all') {
         const duration = parseInt(currentFilters.duration);
-        challenges = challenges.filter(c => c.duration === duration);
+        if (!isNaN(duration)) {
+            challenges = challenges.filter(c => parseInt(c.duration) >= duration);
+        }
     }
-    
+
     // Sort challenges
     challenges = sortChallenges(challenges, currentFilters.sort);
-    
+
     return challenges;
 }
 
@@ -67,21 +69,21 @@ function sortChallenges(challenges, sortBy) {
     switch (sortBy) {
         case 'popular':
             return challenges.sort((a, b) => b.participants - a.participants);
-        
+
         case 'newest':
-            return challenges.sort((a, b) => 
+            return challenges.sort((a, b) =>
                 new Date(b.createdAt) - new Date(a.createdAt)
             );
-        
+
         case 'participants':
             return challenges.sort((a, b) => b.participants - a.participants);
-        
+
         case 'difficulty':
             const difficultyOrder = { beginner: 1, intermediate: 2, advanced: 3 };
-            return challenges.sort((a, b) => 
+            return challenges.sort((a, b) =>
                 difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty]
             );
-        
+
         default:
             return challenges;
     }
@@ -99,30 +101,30 @@ function renderChallenges(challenges) {
     const grid = document.getElementById('challenges-grid');
     const emptyState = document.getElementById('empty-state');
     const challengeCount = document.getElementById('challenge-count');
-    
+
     if (!grid) return;
-    
+
     // Update count
     if (challengeCount) {
         challengeCount.textContent = `${challenges.length} challenge${challenges.length !== 1 ? 's' : ''} found`;
     }
-    
+
     // Show empty state if no challenges
     if (challenges.length === 0) {
         grid.style.display = 'none';
         if (emptyState) emptyState.style.display = 'flex';
         return;
     }
-    
+
     // Hide empty state and show grid
     grid.style.display = 'grid';
     if (emptyState) emptyState.style.display = 'none';
-    
+
     // Render challenge cards
-    grid.innerHTML = challenges.map(challenge => 
+    grid.innerHTML = challenges.map(challenge =>
         renderChallengeCard(challenge, true)
     ).join('');
-    
+
     // Attach event listeners
     attachEventListeners();
 }
@@ -132,7 +134,7 @@ function renderChallenges(challenges) {
  */
 function attachEventListeners() {
     const joinButtons = document.querySelectorAll('.join-challenge-btn');
-    
+
     joinButtons.forEach(button => {
         button.addEventListener('click', handleJoinChallenge);
     });
@@ -145,13 +147,13 @@ function attachEventListeners() {
 async function handleJoinChallenge(event) {
     const button = event.target;
     const challengeId = button.dataset.challengeId;
-    
+
     // Check if already joined - redirect to progress
     if (hasJoinedChallenge(challengeId)) {
         window.location.href = '../profile/index.html?tab=challenges';
         return;
     }
-    
+
     // Check if user is logged in
     if (!isLoggedIn()) {
         const shouldRedirect = confirm('You must be logged in to join challenges. Go to login page?');
@@ -160,23 +162,23 @@ async function handleJoinChallenge(event) {
         }
         return;
     }
-    
+
     // Disable button
     const originalText = button.textContent;
     button.disabled = true;
     button.textContent = 'Joining...';
-    
+
     try {
         const result = await joinChallenge(challengeId);
-        
+
         if (result.success) {
             button.textContent = '✓ Joined!';
             button.classList.remove('btn-primary');
             button.classList.add('btn-secondary');
-            
+
             // Show success message
             showNotification('Success', result.message, 'success');
-            
+
             // Update button after delay
             setTimeout(() => {
                 button.textContent = 'View Progress';
@@ -210,19 +212,19 @@ function showNotification(title, message, type = 'info') {
         </div>
         <button class="notification-close">&times;</button>
     `;
-    
+
     // Add to body
     document.body.appendChild(notification);
-    
+
     // Animate in
     setTimeout(() => notification.classList.add('show'), 10);
-    
+
     // Auto remove after 5 seconds
     setTimeout(() => {
         notification.classList.remove('show');
         setTimeout(() => notification.remove(), 300);
     }, 5000);
-    
+
     // Close button
     notification.querySelector('.notification-close').addEventListener('click', () => {
         notification.classList.remove('show');
@@ -246,7 +248,7 @@ function initializeFilters() {
             updateDisplay();
         });
     }
-    
+
     // Difficulty filter
     const difficultyFilter = document.getElementById('difficulty-filter');
     if (difficultyFilter) {
@@ -255,7 +257,7 @@ function initializeFilters() {
             updateDisplay();
         });
     }
-    
+
     // Duration filter
     const durationFilter = document.getElementById('duration-filter');
     if (durationFilter) {
@@ -264,7 +266,7 @@ function initializeFilters() {
             updateDisplay();
         });
     }
-    
+
     // Sort filter
     const sortFilter = document.getElementById('sort-filter');
     if (sortFilter) {
@@ -273,17 +275,17 @@ function initializeFilters() {
             updateDisplay();
         });
     }
-    
+
     // Reset filters button
     const resetButton = document.getElementById('reset-filters');
     if (resetButton) {
         resetButton.addEventListener('click', resetFilters);
     }
-    
+
     // Mobile filter toggle
     const filterToggle = document.querySelector('.filter-toggle');
     const filtersContainer = document.querySelector('.filters-container');
-    
+
     if (filterToggle && filtersContainer) {
         filterToggle.addEventListener('click', () => {
             filtersContainer.classList.toggle('active');
@@ -301,13 +303,13 @@ function resetFilters() {
         duration: 'all',
         sort: 'popular'
     };
-    
+
     // Reset select elements
     document.getElementById('category-filter').value = 'all';
     document.getElementById('difficulty-filter').value = 'all';
     document.getElementById('duration-filter').value = 'all';
     document.getElementById('sort-filter').value = 'popular';
-    
+
     updateDisplay();
 }
 
@@ -328,28 +330,28 @@ function updateDisplay() {
  */
 function initializeSearch() {
     const searchInput = document.getElementById('challenge-search');
-    
+
     if (searchInput) {
         let searchTimeout;
-        
+
         searchInput.addEventListener('input', (e) => {
             clearTimeout(searchTimeout);
-            
+
             searchTimeout = setTimeout(() => {
                 const query = e.target.value.toLowerCase().trim();
-                
+
                 if (query === '') {
                     updateDisplay();
                     return;
                 }
-                
+
                 const challenges = applyFilters();
-                const searchResults = challenges.filter(c => 
+                const searchResults = challenges.filter(c =>
                     c.title.toLowerCase().includes(query) ||
                     c.description.toLowerCase().includes(query) ||
                     c.category.toLowerCase().includes(query)
                 );
-                
+
                 renderChallenges(searchResults);
             }, 300);
         });
@@ -365,14 +367,14 @@ function initializeSearch() {
  */
 function loadFiltersFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
-    
+
     const category = urlParams.get('category');
     if (category) {
         currentFilters.category = category;
         const categoryFilter = document.getElementById('category-filter');
         if (categoryFilter) categoryFilter.value = category;
     }
-    
+
     const difficulty = urlParams.get('difficulty');
     if (difficulty) {
         currentFilters.difficulty = difficulty;
@@ -386,23 +388,23 @@ function loadFiltersFromURL() {
  */
 function updateURL() {
     const params = new URLSearchParams();
-    
+
     if (currentFilters.category !== 'all') {
         params.set('category', currentFilters.category);
     }
-    
+
     if (currentFilters.difficulty !== 'all') {
         params.set('difficulty', currentFilters.difficulty);
     }
-    
+
     if (currentFilters.duration !== 'all') {
         params.set('duration', currentFilters.duration);
     }
-    
+
     if (currentFilters.sort !== 'popular') {
         params.set('sort', currentFilters.sort);
     }
-    
+
     const newURL = params.toString() ? `?${params.toString()}` : window.location.pathname;
     window.history.replaceState({}, '', newURL);
 }
@@ -417,16 +419,16 @@ function updateURL() {
 function initializeChallengesPage() {
     // Load filters from URL
     loadFiltersFromURL();
-    
+
     // Initialize filters
     initializeFilters();
-    
+
     // Initialize search
     initializeSearch();
-    
+
     // Initial display
     updateDisplay();
-    
+
     console.log('✅ Challenges page initialized');
 }
 

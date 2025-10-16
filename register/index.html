@@ -1,36 +1,76 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create an account at FitChallenge">
     <title>Register | FitChallenge</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/auth.css">
 </head>
+
 <body>
     <!-- Header will be loaded dynamically -->
     <div id="header-placeholder"></div>
 
     <main class="auth-page">
         <div class="auth-container">
-            <h1>Create your FitChallenge account</h1>
-            <p>Sign up and join the community.</p>
-            <!-- Simple form placeholder -->
-            <form class="auth-form">
-                <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <input id="name" name="name" required>
+            <!-- Left: Branding -->
+            <div class="auth-branding">
+                <div class="branding-content">
+                    <div class="logo-large">
+                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                        </svg>
+                    </div>
+                    <h1>Create your account</h1>
+                    <p>Join thousands of athletes and start your fitness journey.</p>
                 </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input id="email" name="email" type="email" required>
+            </div>
+
+            <!-- Right: Register Form -->
+            <div class="auth-form-container">
+                <div class="auth-form-wrapper">
+                    <a href="../index.html" class="back-link">← Back to Home</a>
+                    <div class="auth-form-content active" id="signup-form">
+                        <h2 class="form-title">Create Your Account</h2>
+                        <p class="form-subtitle">Join thousands of athletes achieving their goals</p>
+
+                        <form id="signup-form-element" novalidate>
+                            <div class="form-group">
+                                <label for="signup-name">Full Name</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="signup-name" name="name" placeholder="John Doe" required
+                                        autocomplete="name">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="signup-email">Email Address</label>
+                                <div class="input-wrapper">
+                                    <input type="email" id="signup-email" name="email" placeholder="you@example.com"
+                                        required autocomplete="email">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="signup-password">Password</label>
+                                <div class="input-wrapper">
+                                    <input type="password" id="signup-password" name="password"
+                                        placeholder="At least 8 characters" required autocomplete="new-password">
+                                    <button type="button" class="input-action toggle-password"
+                                        data-target="signup-password">👁</button>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                        </form>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input id="password" name="password" type="password" required>
-                </div>
-                <button class="btn btn-primary">Create Account</button>
-            </form>
+            </div>
         </div>
     </main>
 
@@ -40,4 +80,7 @@
     <script src="../js/include_fragments.js"></script>
     <script src="../js/main.js" type="module"></script>
 </body>
+
+</html>
+
 </html>

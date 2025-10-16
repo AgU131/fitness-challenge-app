@@ -866,3 +866,242 @@ export {
     renderChallengeCard,
     loadFeaturedChallenges
 };
+
+// ========================================
+// BEGIN: Filter, search and UI for challenges page
+// (merged from js/challenges_filter.js)
+// ========================================
+
+// State for filters
+let currentFilters = {
+    category: 'all',
+    difficulty: 'all',
+    duration: 'all',
+    sort: 'popular'
+};
+
+function sortChallengesLocal(challenges, sortBy) {
+    switch (sortBy) {
+        case 'popular':
+            return challenges.sort((a, b) => b.participants - a.participants);
+
+        case 'newest':
+            return challenges.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        case 'participants':
+            return challenges.sort((a, b) => b.participants - a.participants);
+
+        case 'difficulty':
+            const difficultyOrder = { beginner: 1, intermediate: 2, advanced: 3 };
+            return challenges.sort((a, b) => difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty]);
+
+        default:
+            return challenges;
+    }
+}
+
+function applyFiltersLocal() {
+    let challengesList = getChallenges();
+
+    // Category
+    if (currentFilters.category !== 'all') {
+        challengesList = challengesList.filter(c => c.category === currentFilters.category);
+    }
+
+    // Difficulty
+    if (currentFilters.difficulty !== 'all') {
+        challengesList = challengesList.filter(c => c.difficulty === currentFilters.difficulty);
+    }
+
+    // Duration (minimum)
+    if (currentFilters.duration !== 'all') {
+        const duration = parseInt(currentFilters.duration);
+        if (!isNaN(duration)) {
+            challengesList = challengesList.filter(c => parseInt(c.duration) >= duration);
+        }
+    }
+
+    // Sort
+    challengesList = sortChallengesLocal(challengesList, currentFilters.sort);
+
+    return challengesList;
+}
+
+function renderChallengesLocal(challengesArr) {
+    const grid = document.getElementById('challenges-grid');
+    const emptyState = document.getElementById('empty-state');
+    const challengeCount = document.getElementById('challenge-count');
+
+    if (!grid) return;
+
+    if (challengeCount) {
+        challengeCount.textContent = `${challengesArr.length} challenge${challengesArr.length !== 1 ? 's' : ''} found`;
+    }
+
+    if (challengesArr.length === 0) {
+        grid.style.display = 'none';
+        if (emptyState) emptyState.style.display = 'flex';
+        return;
+    }
+
+    grid.style.display = 'grid';
+    if (emptyState) emptyState.style.display = 'none';
+
+    grid.innerHTML = challengesArr.map(ch => renderChallengeCard(ch, true)).join('');
+    attachEventListenersLocal();
+}
+
+function attachEventListenersLocal() {
+    const joinButtons = document.querySelectorAll('.join-challenge-btn');
+    joinButtons.forEach(button => button.addEventListener('click', handleJoinChallengeLocal));
+}
+
+async function handleJoinChallengeLocal(event) {
+    const button = event.target;
+    const challengeId = button.dataset.challengeId;
+
+    if (hasJoinedChallenge(challengeId)) {
+        window.location.href = '../profile/index.html?tab=challenges';
+        return;
+    }
+
+    if (!isLoggedIn()) {
+        const shouldRedirect = confirm('You must be logged in to join challenges. Go to login page?');
+        if (shouldRedirect) window.location.href = '../login/index.html';
+        return;
+    }
+
+    const originalText = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Joining...';
+
+    try {
+        const result = await joinChallenge(challengeId);
+        if (result.success) {
+            button.textContent = '✓ Joined!';
+            button.classList.remove('btn-primary');
+            button.classList.add('btn-secondary');
+            showNotification('Success', result.message, 'success');
+            setTimeout(() => { button.textContent = 'View Progress'; }, 2000);
+        } else {
+            button.disabled = false;
+            button.textContent = originalText;
+            showNotification('Error', result.message, 'error');
+        }
+    } catch (err) {
+        button.disabled = false;
+        button.textContent = originalText;
+        showNotification('Error', 'An unexpected error occurred', 'error');
+    }
+}
+
+function showNotification(title, message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <strong>${title}</strong>
+            <p>${message}</p>
+        </div>
+        <button class="notification-close">&times;</button>
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.classList.add('show'), 10);
+    setTimeout(() => { notification.classList.remove('show'); setTimeout(() => notification.remove(), 300); }, 5000);
+    notification.querySelector('.notification-close').addEventListener('click', () => { notification.classList.remove('show'); setTimeout(() => notification.remove(), 300); });
+}
+
+function initializeFiltersLocal() {
+    const categoryFilter = document.getElementById('category-filter');
+    if (categoryFilter) categoryFilter.addEventListener('change', (e) => { currentFilters.category = e.target.value; updateDisplayLocal(); });
+
+    const difficultyFilter = document.getElementById('difficulty-filter');
+    if (difficultyFilter) difficultyFilter.addEventListener('change', (e) => { currentFilters.difficulty = e.target.value; updateDisplayLocal(); });
+
+    const durationFilter = document.getElementById('duration-filter');
+    if (durationFilter) durationFilter.addEventListener('change', (e) => { currentFilters.duration = e.target.value; updateDisplayLocal(); });
+
+    const sortFilter = document.getElementById('sort-filter');
+    if (sortFilter) sortFilter.addEventListener('change', (e) => { currentFilters.sort = e.target.value; updateDisplayLocal(); });
+
+    const resetButton = document.getElementById('reset-filters');
+    if (resetButton) resetButton.addEventListener('click', resetFiltersLocal);
+
+    const filterToggle = document.querySelector('.filter-toggle');
+    const filtersContainer = document.querySelector('.filters-container');
+    if (filterToggle && filtersContainer) filterToggle.addEventListener('click', () => filtersContainer.classList.toggle('active'));
+}
+
+function resetFiltersLocal() {
+    currentFilters = { category: 'all', difficulty: 'all', duration: 'all', sort: 'popular' };
+    const cf = document.getElementById('category-filter'); if (cf) cf.value = 'all';
+    const df = document.getElementById('difficulty-filter'); if (df) df.value = 'all';
+    const du = document.getElementById('duration-filter'); if (du) du.value = 'all';
+    const sf = document.getElementById('sort-filter'); if (sf) sf.value = 'popular';
+    updateDisplayLocal();
+}
+
+function updateDisplayLocal() {
+    const filtered = applyFiltersLocal();
+    renderChallengesLocal(filtered);
+    updateURLLocal();
+}
+
+function initializeSearchLocal() {
+    const searchInput = document.getElementById('challenge-search');
+    if (!searchInput) return;
+    let timeout;
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            const q = e.target.value.toLowerCase().trim();
+            if (q === '') { updateDisplayLocal(); return; }
+            const challengesList = applyFiltersLocal();
+            const results = challengesList.filter(c => c.title.toLowerCase().includes(q) || c.description.toLowerCase().includes(q) || c.category.toLowerCase().includes(q));
+            renderChallengesLocal(results);
+        }, 300);
+    });
+}
+
+function loadFiltersFromURLLocal() {
+    const params = new URLSearchParams(window.location.search);
+    const category = params.get('category'); if (category) { currentFilters.category = category; const el = document.getElementById('category-filter'); if (el) el.value = category; }
+    const difficulty = params.get('difficulty'); if (difficulty) { currentFilters.difficulty = difficulty; const el = document.getElementById('difficulty-filter'); if (el) el.value = difficulty; }
+}
+
+function updateURLLocal() {
+    const params = new URLSearchParams();
+    if (currentFilters.category !== 'all') params.set('category', currentFilters.category);
+    if (currentFilters.difficulty !== 'all') params.set('difficulty', currentFilters.difficulty);
+    if (currentFilters.duration !== 'all') params.set('duration', currentFilters.duration);
+    if (currentFilters.sort !== 'popular') params.set('sort', currentFilters.sort);
+    const newURL = params.toString() ? `?${params.toString()}` : window.location.pathname;
+    window.history.replaceState({}, '', newURL);
+}
+
+function initializeChallengesPageLocal() {
+    loadFiltersFromURLLocal();
+    initializeFiltersLocal();
+    initializeSearchLocal();
+    updateDisplayLocal();
+    console.log('✅ Challenges page initialized (merged)');
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeChallengesPageLocal);
+} else {
+    initializeChallengesPageLocal();
+}
+
+// Export small helpers if other modules rely on them
+export {
+    applyFiltersLocal as applyFilters,
+    sortChallengesLocal as sortChallenges,
+    renderChallengesLocal as renderChallenges,
+    resetFiltersLocal as resetFilters,
+    showNotification as showNotificationLocal
+};
+
+// ========================================
+// END: Filter, search and UI for challenges page
+// ========================================
