@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Profile — Fitness Stats</title>
+    <link rel="stylesheet" href="../css/profile.css">
+</head>
+<body>
+    <!-- Header will be loaded dynamically -->
+    <div id="header-placeholder"></div>
+
+    <main class="container" id="app">
+        <header>
+            <div class="avatar" id="avatar">U</div>
+            <div>
+                <h1 id="name">Profile</h1>
+                <div class="meta" id="subtitle">Connect to your exercises API to show stats</div>
+            </div>
+
+            <div class="controls">
+                <button class="btn" id="refreshBtn">Refresh</button>
+                <button class="btn ghost" id="connectBtn">Connect</button>
+            </div>
+        </header>
+
+        <section class="settings" aria-hidden="false">
+            <label>Username:
+                <input type="text" id="username" placeholder="Enter public username (e.g. strava handle)" style="width:320px">
+            </label>
+            <button class="btn" id="loadUserBtn">Load</button>
+            <div style="font-size:.85rem;color:#556;margin-left:12px">Tip: enter the public username to load stats. If not found, demo data will be shown.</div>
+        </section>
+
+        <div id="status" style="margin-top:12px"></div>
+
+        <section class="grid" id="statsGrid" aria-live="polite" style="display:none">
+            <div class="card">
+                <h3>Total Distance</h3>
+                <p id="totalDistance">—</p>
+            </div>
+            <div class="card">
+                <h3>Total Time</h3>
+                <p id="totalTime">—</p>
+            </div>
+            <div class="card">
+                <h3>Activities</h3>
+                <p id="activitiesCount">—</p>
+            </div>
+        </section>
+
+        <section class="activities" id="activitiesList" style="display:none">
+            <h2 style="margin:0 0 10px 0">Recent Activities</h2>
+            <div id="activitiesContainer"></div>
+        </section>
+    </main>
+
+    <!-- Footer will be loaded dynamically -->
+    <div id="footer-placeholder"></div>
+
+    <script src="../js/profile.js" type="module"></script>
+</body>
+</html>
