@@ -4,6 +4,7 @@ async function fetchFragment(path) {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return await res.text();
     } catch (e) {
+        console.debug('fetchFragment failed for', path, e.message);
         return null;
     }
 }
@@ -20,8 +21,9 @@ async function includeHeaderFooter() {
     ];
 
     // Determine header/footer path by trying a few relative variants
-    const headerPaths = ['header.html', '../header.html', './header.html', '/header.html'];
-    const footerPaths = ['footer.html', '../footer.html', './footer.html', '/footer.html'];
+    // Try absolute (root) first, then a few relative options
+    const headerPaths = ['/header.html', './header.html', '../header.html', 'header.html'];
+    const footerPaths = ['/footer.html', './footer.html', '../footer.html', 'footer.html'];
 
     let headerHTML = null;
     for (const p of headerPaths) {
@@ -33,6 +35,7 @@ async function includeHeaderFooter() {
     for (const p of footerPaths) {
         footerHTML = await fetchFragment(p);
         if (footerHTML) { break; }
+        console.debug('Tried footer path:', p, '->', !!footerHTML);
     }
 
     const headerPlaceholders = ['header-placeholder', 'site-header', 'site-header-placeholder'];
@@ -44,6 +47,7 @@ async function includeHeaderFooter() {
             el.innerHTML = headerHTML;
             break;
         }
+        if (el && !headerHTML) console.debug('Found placeholder', id, 'but no headerHTML loaded');
     }
 
     for (const id of footerPlaceholders) {
@@ -52,6 +56,7 @@ async function includeHeaderFooter() {
             el.innerHTML = footerHTML;
             break;
         }
+        if (el && !footerHTML) console.debug('Found placeholder', id, 'but no footerHTML loaded');
     }
 }
 
@@ -61,3 +66,4 @@ if (document.readyState === 'loading') {
 } else {
     includeHeaderFooter();
 }
+

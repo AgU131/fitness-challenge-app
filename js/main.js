@@ -105,37 +105,41 @@ function startMessageRotation() {
  * Handles opening/closing the mobile navigation menu
  */
 function initializeMobileMenu() {
-    const menuToggle = document.querySelector('.mobile-menu-toggle');
-    const mainNav = document.querySelector('.main-nav');
-    
-    if (!menuToggle || !mainNav) return;
-    
-    menuToggle.addEventListener('click', () => {
-        // Toggle 'active' class on navigation
-        mainNav.classList.toggle('active');
-        menuToggle.classList.toggle('active');
-        
-        // Prevent body scroll when menu is open
-        document.body.classList.toggle('menu-open');
-    });
-    
-    // Close menu when clicking outside
+    // Use event delegation so menu works even if header is injected after this script runs
     document.addEventListener('click', (e) => {
-        if (!e.target.closest('.main-nav') && !e.target.closest('.mobile-menu-toggle')) {
-            mainNav.classList.remove('active');
-            menuToggle.classList.remove('active');
-            document.body.classList.remove('menu-open');
+        const toggle = e.target.closest('.mobile-menu-toggle');
+        const mainNav = document.querySelector('.main-nav');
+
+        // If toggle was clicked, toggle menu
+        if (toggle) {
+            if (!mainNav) return;
+            mainNav.classList.toggle('active');
+            toggle.classList.toggle('active');
+            document.body.classList.toggle('menu-open');
+            return;
         }
-    });
-    
-    // Close menu when clicking on a nav link
-    const navLinks = mainNav.querySelectorAll('a');
-    navLinks.forEach(link => {
-        link.addEventListener('click', () => {
+
+        // If a nav link was clicked, close menu
+        const navLink = e.target.closest('.main-nav a');
+        if (navLink && mainNav) {
             mainNav.classList.remove('active');
-            menuToggle.classList.remove('active');
+            const mt = document.querySelector('.mobile-menu-toggle');
+            if (mt) mt.classList.remove('active');
             document.body.classList.remove('menu-open');
-        });
+            return;
+        }
+
+        // Click outside navigation and toggle should close the menu if open
+        const clickedInsideNav = !!e.target.closest('.main-nav');
+        const clickedToggle = !!e.target.closest('.mobile-menu-toggle');
+        if (!clickedInsideNav && !clickedToggle) {
+            if (mainNav && mainNav.classList.contains('active')) {
+                mainNav.classList.remove('active');
+                const mt = document.querySelector('.mobile-menu-toggle');
+                if (mt) mt.classList.remove('active');
+                document.body.classList.remove('menu-open');
+            }
+        }
     });
 }
 
