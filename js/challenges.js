@@ -680,10 +680,24 @@ export function renderChallengeCard(challenge, showJoinButton = true) {
     const buttonText = hasJoined ? 'View Progress' : 'Join Challenge';
     const buttonClass = hasJoined ? 'btn-secondary' : 'btn-primary';
 
+    // 🔹 Fallback images for each category
+    const categoryImages = {
+        running: "https://images.unsplash.com/photo-1605296867304-46d5465a13f1?auto=format&fit=crop&w=900&q=80",
+        yoga: "https://images.unsplash.com/photo-1554344058-0fffe0c02b7e?auto=format&fit=crop&w=900&q=80",
+        strength: "https://images.unsplash.com/photo-1594737625785-cd0a3b1b3f2e?auto=format&fit=crop&w=900&q=80",
+        hiit: "https://images.unsplash.com/photo-1605296867756-5c68e08f72a6?auto=format&fit=crop&w=900&q=80",
+        cycling: "https://images.unsplash.com/photo-1508973376999-6f7b36a4d77a?auto=format&fit=crop&w=900&q=80",
+        swimming: "https://images.unsplash.com/photo-1508830524289-0adcbe822b40?auto=format&fit=crop&w=900&q=80",
+        default: "https://images.unsplash.com/photo-1571019613914-85f342c7eaf1?auto=format&fit=crop&w=900&q=80"
+    };
+
+    // 🔹 Choose image: prefer challenge.imageUrl, fallback to category image, then default
+    const imageUrl = challenge.imageUrl || categoryImages[challenge.category?.toLowerCase()] || categoryImages.default;
+
     return `
         <article class="challenge-card" data-challenge-id="${challenge.id}">
             <div class="challenge-image">
-                <img src="${challenge.imageUrl}" alt="${challenge.title}">
+                <img src="${imageUrl}" alt="${challenge.title}">
                 ${challenge.featured ? '<div class="challenge-badge">Popular</div>' : ''}
             </div>
             <div class="challenge-content">
@@ -721,6 +735,7 @@ export function renderChallengeCard(challenge, showJoinButton = true) {
         </article>
     `;
 }
+
 
 /**
  * Load featured challenges into container
